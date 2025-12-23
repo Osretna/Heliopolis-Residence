@@ -115,3 +115,61 @@ td { padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .toast.success { background: #2ecc71; }
 .toast.info { background: #3498db; }
 @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
+/* التوافق مع الشاشات الصغيرة (Mobile Responsive) */
+@media (max-width: 768px) {
+    .main-wrapper {
+        flex-direction: column; /* تحويل القائمة الجانبية لتصبح فوق المحتوى */
+        padding: 10px;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .nav-links {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* عرض الأيقونات بشكل شبكي صغير */
+        gap: 5px;
+    }
+
+    .nav-links li {
+        padding: 8px;
+        font-size: 0.75rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+
+    .nav-links li i { font-size: 1.2rem; }
+
+    .header-search { display: none; } /* إخفاء البحث في الموبايل لتوفير مساحة */
+    
+    .grid-4 {
+        grid-template-columns: 1fr 1fr; /* عرض كرتين في كل صف بدل 4 */
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr; /* عرض الإحصائيات فوق بعضها */
+    }
+
+    .form-grid {
+        flex-direction: column; /* النماذج تصبح عمودية لسهولة الكتابة */
+    }
+
+    input, select, .btn-gold {
+        width: 100%; /* تمدد المدخلات بعرض الشاشة */
+    }
+
+    .styled-table {
+        display: block;
+        overflow-x: auto; /* السماح بالتمرير الجانبي للجداول الطويلة */
+    }
+    
+    .designer-credit { display: none; } /* إخفاء التوقيع في القائمة لتوفير مساحة */
+}

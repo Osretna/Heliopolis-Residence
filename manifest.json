@@ -1,0 +1,18 @@
+{
+  "name": "Heliopolis Residence System",
+  "short_name": "Heliopolis",
+  "description": "نظام إدارة كمبوند هليوبوليس رزيدنس - م/ محمد صلاح",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#1a2a6c",
+  "theme_color": "#d4af37",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1018/1018531.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
