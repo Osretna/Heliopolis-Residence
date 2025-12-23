@@ -132,60 +132,127 @@ td { padding: 15px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 .toast.info { background: #3498db; }
 @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 20px; opacity: 1; } }
 /* التوافق مع الشاشات الصغيرة (Mobile Responsive) */
+/* --- التنسيقات الأساسية لإصلاح التمرير --- */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    /* السماح بالتمرير في الموبايل ومنعه في الكمبيوتر إذا لزم الأمر */
+    overflow-x: hidden; 
+}
+
+.main-wrapper {
+    display: flex;
+    height: 100vh; /* ملء الشاشة في الكمبيوتر */
+    gap: 20px;
+    padding: 20px;
+}
+
+/* --- تعديلات الموبايل الجوهرية (Responsive Design) --- */
 @media (max-width: 768px) {
+    body {
+        overflow-y: auto !important; /* فتح قفل التمرير إجبارياً */
+        height: auto !important;
+    }
+
     .main-wrapper {
-        flex-direction: column; /* تحويل القائمة الجانبية لتصبح فوق المحتوى */
+        flex-direction: column; /* ترتيب القائمة فوق المحتوى */
+        height: auto !important;
         padding: 10px;
-        height: auto;
-        overflow-y: auto;
     }
 
     .sidebar {
-        width: 100%;
-        height: auto;
-        margin-bottom: 15px;
-        padding: 15px;
-        border-radius: 15px;
+        width: 100% !important;
+        height: auto !important;
+        position: relative;
+        padding: 15px !important;
+        border-radius: 15px !important;
+        margin-bottom: 10px;
     }
 
     .nav-links {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* عرض الأيقونات بشكل شبكي صغير */
-        gap: 5px;
+        display: flex !important;
+        overflow-x: auto; /* تحويل القائمة الجانبية لشريط أفقي قابل للسحب */
+        white-space: nowrap;
+        padding-bottom: 10px;
+        gap: 10px;
     }
 
     .nav-links li {
-        padding: 8px;
-        font-size: 0.75rem;
-        flex-direction: column;
-        text-align: center;
-        gap: 5px;
+        display: inline-flex;
+        padding: 10px 15px !important;
+        flex: 0 0 auto;
+        font-size: 0.8rem !important;
     }
 
-    .nav-links li i { font-size: 1.2rem; }
+    .content-body {
+        width: 100%;
+        height: auto !important;
+    }
 
-    .header-search { display: none; } /* إخفاء البحث في الموبايل لتوفير مساحة */
-    
-    .grid-4 {
-        grid-template-columns: 1fr 1fr; /* عرض كرتين في كل صف بدل 4 */
+    .main-header {
+        flex-direction: column;
+        height: auto !important;
+        padding: 15px !important;
+        gap: 10px;
+    }
+
+    .header-search {
+        width: 100%;
+    }
+
+    .header-search input {
+        width: 100% !important;
+    }
+
+    .module-container {
+        height: auto !important; /* السماح للمحتوى بالتمدد لأسفل */
+        overflow: visible !important; 
+        padding: 15px !important;
+    }
+
+    /* تحسين عرض الجداول في الموبايل */
+    .styled-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* تمرير جانبي للجداول فقط */
+        -webkit-overflow-scrolling: touch;
     }
 
     .stats-container {
-        grid-template-columns: 1fr; /* عرض الإحصائيات فوق بعضها */
+        grid-template-columns: 1fr !important; /* كروت الإحصائيات تظهر تحت بعضها */
+        gap: 10px;
     }
 
     .form-grid {
-        flex-direction: column; /* النماذج تصبح عمودية لسهولة الكتابة */
+        grid-template-columns: 1fr !important;
     }
 
-    input, select, .btn-gold {
-        width: 100%; /* تمدد المدخلات بعرض الشاشة */
+    .units-grid {
+        grid-template-columns: 1fr !important;
     }
 
-    .styled-table {
-        display: block;
-        overflow-x: auto; /* السماح بالتمرير الجانبي للجداول الطويلة */
+    /* تصغير حقوق التصميم كما طلبت */
+    .designer-credit {
+        padding-top: 5px !important;
+        font-size: 10px !important;
     }
-    
-    .designer-credit { display: none; } /* إخفاء التوقيع في القائمة لتوفير مساحة */
+}
+
+/* --- تنسيق الحقوق المعدل للمهندس محمد والمهندس طارق --- */
+.designer-credit {
+    margin-top: auto;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 8px;
+}
+.designer-credit p {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+}
+.designer-credit strong {
+    font-size: 11px;
+    color: var(--gold);
+    display: block;
 }

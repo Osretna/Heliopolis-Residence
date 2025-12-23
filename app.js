@@ -82,7 +82,7 @@ window.app = {
         this.currentModule = name;
         const display = document.getElementById('module-display');
         display.innerHTML = '<div class="loader">Syncing Live Data...</div>';
-        
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
         document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
         if(el) el.classList.add('active');
 
