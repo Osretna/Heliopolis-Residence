@@ -40,8 +40,24 @@ body { background: #f0f2f5; height: 100vh; overflow: hidden; }
 .nav-links li:hover, .nav-links li.active { background: var(--primary); color: white; transform: translateX(-5px); }
 [dir="ltr"] .nav-links li:hover { transform: translateX(5px); }
 
-.designer-credit { margin-top: auto; text-align: center; font-size: 0.8rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px; }
+.designer-credit {
+    margin-top: auto;
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
 
+.designer-credit p {
+    font-size: 0.65rem; /* تم تصغير الخط هنا */
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 2px;
+}
+
+.designer-credit strong {
+    font-size: 0.75rem; /* تم تصغير الخط هنا */
+    color: var(--gold);
+    display: block;
+}
 /* Content Area */
 .content-body { flex: 1; display: flex; flex-direction: column; gap: 20px; }
 .main-header { height: 80px; background: var(--glass); backdrop-filter: blur(15px); border-radius: 20px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; }
