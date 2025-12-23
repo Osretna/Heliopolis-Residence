@@ -256,3 +256,55 @@ html, body {
     color: var(--gold);
     display: block;
 }
+/* الصورة داخل دائرة */
+/* الصورة داخل دائرة */
+.avatar {
+    border-radius: 50%;   /* يخلي الصورة دائرية */
+    width: 60px;
+    height: 60px;
+    border: 2px solid #d4af37; /* إطار ذهبي */
+}
+
+/* النص بتأثير إضاءة ذهبية مع لون أسود */
+.glow-text {
+    font-weight: bold;
+    color: #000; /* النص بالأسود */
+    text-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37;
+    }
+    to {
+        text-shadow: 0 0 20px #d4af37, 0 0 30px #d4af37, 0 0 40px #d4af37;
+    }
+}
+
+/* زرار اللغة بنفس النظام */
+.glow-btn {
+    font-weight: bold;
+    color: #000; /* النص بالأسود */
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    cursor: pointer;
+    text-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37;
+    animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37;
+        box-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37;
+    }
+    to {
+        text-shadow: 0 0 20px #d4af37, 0 0 30px #d4af37, 0 0 40px #d4af37;
+        box-shadow: 0 0 15px #d4af37, 0 0 25px #d4af37;
+    }
+}
+
+
+
