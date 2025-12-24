@@ -305,65 +305,162 @@ html, body {
         box-shadow: 0 0 15px #0d6efd, 0 0 25px #0d6efd;
     }
 }
-.form-grid-complex {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    background: rgba(255,255,255,0.5);
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-
-.unit-card-large {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    border-top: 4px solid var(--gold);
-}
-
-.unit-header {
-    background: var(--primary);
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.unit-body {
-    padding: 15px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-.id-placeholder {
-    margin-top: 10px;
-    height: 60px;
-    border: 2px dashed #ccc;
+/* --- تنسيق الهيدر المحترف --- */
+.main-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #999;
-    font-size: 0.8rem;
-    border-radius: 10px;
+    justify-content: space-between;
+    padding: 10px 25px;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-.units-grid-modern {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+/* البحث */
+.header-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 5px 15px;
+    border: 1px solid rgba(0,0,0,0.05);
 }
-
-.btn-mini {
+.search-icon { color: var(--primary); font-size: 0.9rem; }
+.header-search input {
+    border: none;
+    background: none;
+    outline: none;
     padding: 5px 10px;
+    font-size: 0.85rem;
+    width: 200px;
+}
+
+/* الأزرار */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.lang-btn {
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem; /* تصغير الخط */
+    font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+    box-shadow: 0 4px 10px rgba(26, 42, 108, 0.2);
+}
+.lang-btn:hover { background: var(--gold); }
+
+.theme-toggle-btn {
+    background: none;
+    border: 1px solid rgba(0,0,0,0.1);
+    color: var(--text);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
+/* --- بروفايل المهندسين M.T --- */
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 10px;
+    border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+[dir="rtl"] .profile-container {
+    padding-left: 0;
+    padding-right: 10px;
+    border-left: none;
+    border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* ليكون الاسم متناسقاً */
+}
+
+.eng-name {
+    font-size: 0.78rem; /* تصغير اسم المهندسين */
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.avatar-duo {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--primary), var(--gold));
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* دعم الموبايل لهيدر */
+@media (max-width: 768px) {
+    .header-search { display: none; }
+    .eng-name { font-size: 0.65rem; }
+    .avatar-duo { width: 35px; height: 35px; font-size: 0.75rem; }
+}
+/* تأثير الإضاءة والنبض لأسماء المهندسين */
+.eng-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    white-space: nowrap;
+    
+    /* ربط الأنميشن بالاسم */
+    animation: glow-pulse 2.5s infinite ease-in-out;
+}
+
+/* تعريف الأنميشن (الإضاءة) */
+@keyframes glow-pulse {
+    0% {
+        text-shadow: 0 0 0px rgba(212, 175, 55, 0);
+        color: var(--primary); /* اللون الأصلي (الكحلي) */
+    }
+    50% {
+        text-shadow: 0 0 8px var(--gold), 0 0 15px var(--gold);
+        color: #d4af37; /* يتحول للذهبي المشع في منتصف الأنميشن */
+    }
+    100% {
+        text-shadow: 0 0 0px rgba(212, 175, 55, 0);
+        color: var(--primary); /* يعود للونه الطبيعي */
+    }
+}
+
+/* إضافة لمسة إضاءة دائرية حول الـ Avatar M.T */
+.avatar-duo {
+    animation: border-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes border-glow {
+    0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 0 15px var(--gold); }
+}
 
 
 

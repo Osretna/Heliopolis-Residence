@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, updateDoc, getDocs, orderBy, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, updateDoc, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDM3sxud-Dq0EOmeY4_ZpLVkH0qcaYzB54",
@@ -15,28 +15,76 @@ const firebaseConfig = {
 const appInstance = initializeApp(firebaseConfig);
 const db = getFirestore(appInstance);
 
-// --- فلاتر الحماية وتنسيق الأرقام والتواريخ ---
+// --- فلاتر الحماية وتنسيق الأرقام ---
 const safeNum = (v) => (isNaN(parseFloat(v)) || v === undefined) ? 0 : parseFloat(v);
 const safeStr = (s) => (s === undefined || s === null || s === "" || s === "undefined") ? "---" : s;
 const formatCurrency = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'EGP' }).format(safeNum(n));
+
+// --- قاموس الترجمة الكامل ---
+const translations = {
+    ar: {
+        app_title: "هليوبوليس رزيدنس",
+        nav_dashboard: "الرئيسية",
+        nav_hr: "شئون العاملين",
+        nav_units: "الوحدات والملاك",
+        nav_finance: "الماليات",
+        nav_maintenance: "الصيانة",
+        nav_security: "الأمن",
+        nav_reports: "التقارير",
+        search: "بحث سريع...",
+        welcome: "لوحة التحكم الحقيقية",
+        add: "إضافة",
+        save: "حفظ",
+        delete: "حذف"
+    },
+    en: {
+        app_title: "Heliopolis Residence",
+        nav_dashboard: "Dashboard",
+        nav_hr: "HR Dept",
+        nav_units: "Units & Owners",
+        nav_finance: "Finance",
+        nav_maintenance: "Maintenance",
+        nav_security: "Security",
+        nav_reports: "Reports",
+        search: "Quick Search...",
+        welcome: "Live Management Dashboard",
+        add: "Add",
+        save: "Save",
+        delete: "Delete"
+    }
+};
 
 window.app = {
     currentLang: 'ar',
     currentModule: 'dashboard',
 
+    // تفعيل زر اللغة
     toggleLanguage() {
-        this.currentLang = this.currentLang === 'ar' ? 'en' : 'ar';
-        document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
-        document.getElementById('lang-label').innerText = this.currentLang === 'ar' ? 'EN' : 'AR';
-        this.loadModule(this.currentModule);
+    this.currentLang = this.currentLang === 'ar' ? 'en' : 'ar';
+    document.documentElement.dir = this.currentLang === 'ar' ? 'rtl' : 'ltr';
+        const langBtn = document.querySelector('.lang-btn span');
+    if(langBtn) {
+        langBtn.innerText = this.currentLang === 'ar' ? 'ENGLISH' : 'العربية';
+    }
+        this.loadModule(this.currentModule); // إعادة تحميل الموديول باللغة الجديدة
+    },
+
+    updateStaticTexts() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.innerText = translations[this.currentLang][key];
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            el.placeholder = translations[this.currentLang][key];
+        });
     },
 
     async loadModule(name, el) {
         this.currentModule = name;
         const display = document.getElementById('module-display');
-        display.innerHTML = '<div class="loader">Heliopolis System Syncing...</div>';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
+        display.innerHTML = '<div class="loader">Syncing Live Data...</div>';
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
         document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
         if(el) el.classList.add('active');
 
@@ -51,247 +99,134 @@ window.app = {
         }
     },
 
-    // 1. الرئيسية (إحصائيات شاملة)
     renderDashboard() {
         onSnapshot(collection(db, "Units"), (uSnap) => {
-            onSnapshot(collection(db, "Finance"), (fSnap) => {
-                let totalCash = 0;
-                fSnap.forEach(d => {
-                    const f = d.data();
-                    totalCash += (f.type === 'إيراد' ? safeNum(f.amount) : -safeNum(f.amount));
+            onSnapshot(collection(db, "Employees"), (eSnap) => {
+                onSnapshot(collection(db, "Finance"), (fSnap) => {
+                    let totalCash = 0;
+                    fSnap.forEach(d => {
+                        const f = d.data();
+                        totalCash += (f.type === 'إيراد' || f.type === 'Revenue' ? safeNum(f.amount) : -safeNum(f.amount));
+                    });
+                    document.getElementById('module-display').innerHTML = `
+                        <div class="fade-in">
+                            <h2 class="welcome-text">${translations[this.currentLang].welcome}</h2>
+                            <div class="stats-container">
+                                <div class="stat-card blue"><div><h4>Units</h4><h3>${uSnap.size}</h3></div></div>
+                                <div class="stat-card green"><div><h4>Balance</h4><h3>${formatCurrency(totalCash)}</h3></div></div>
+                                <div class="stat-card gold"><div><h4>Staff</h4><h3>${eSnap.size}</h3></div></div>
+                            </div>
+                        </div>`;
                 });
-                document.getElementById('module-display').innerHTML = `
-                    <div class="fade-in">
-                        <h2 class="welcome-text">لوحة التحكم الإدارية | م/ محمد صلاح & م/ طارق زينهم</h2>
-                        <div class="stats-container">
-                            <div class="stat-card blue"><div><h4>إجمالي الوحدات</h4><h3>${uSnap.size}</h3></div></div>
-                            <div class="stat-card green"><div><h4>الرصيد الفعلي</h4><h3>${formatCurrency(totalCash)}</h3></div></div>
-                            <div class="stat-card gold"><div><h4>طلبات نشطة</h4><h3>12</h3></div></div>
-                        </div>
-                    </div>`;
             });
         });
     },
 
-    // 2. الموارد البشرية (حضور وانصراف + إضافي وخصم)
     renderHR() {
         onSnapshot(collection(db, "Employees"), (snap) => {
             let rows = "";
             snap.forEach(doc => {
                 const e = doc.data();
-                rows += `<tr>
-                    <td>${safeStr(e.name)}</td>
-                    <td>${safeStr(e.job)}</td>
-                    <td>${formatCurrency(e.salary)}</td>
-                    <td>+${safeNum(e.bonus)} / -${safeNum(e.penalty)}</td>
-                    <td>${e.checkIn || '--:--'} | ${e.checkOut || '--:--'}</td>
-                    <td><button class="btn-mini" onclick="app.setAttendance('${doc.id}')">بصمة</button></td>
-                </tr>`;
+                rows += `<tr><td>${safeStr(e.name)}</td><td>${safeStr(e.job)}</td><td>${formatCurrency(e.salary)}</td><td><button class="btn-del" onclick="app.deleteDoc('Employees','${doc.id}','hr')">X</button></td></tr>`;
             });
             document.getElementById('module-display').innerHTML = `
                 <div class="module-card">
-                    <h2>شئون العاملين (الرواتب والحضور)</h2>
+                    <h2>${translations[this.currentLang].nav_hr}</h2>
                     <div class="form-grid">
-                        <input id="en" placeholder="الاسم">
-                        <input id="ej" placeholder="الوظيفة">
-                        <input id="es" type="number" placeholder="الراتب">
-                        <input id="eb" type="number" placeholder="إضافي">
-                        <input id="ep" type="number" placeholder="خصم">
-                        <button class="btn-gold" onclick="app.addEmp()">إضافة موظف</button>
+                        <input id="empName" placeholder="Name">
+                        <input id="empJob" placeholder="Job">
+                        <input id="empSalary" type="number" placeholder="Salary">
+                        <button class="btn-gold" onclick="app.addEmp()">${translations[this.currentLang].add}</button>
                     </div>
-                    <table class="styled-table"><thead><tr><th>الاسم</th><th>الوظيفة</th><th>الأساسي</th><th>إضافي/خصم</th><th>حضور/انصراف</th><th>بصمة</th></tr></thead><tbody>${rows}</tbody></table>
+                    <table class="styled-table"><thead><tr><th>Name</th><th>Job</th><th>Salary</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>
                 </div>`;
         });
     },
 
-    // 3. الوحدات والملاك (عمارة > شقة + بيانات تفصيلية + سيارات)
     renderUnits() {
         onSnapshot(collection(db, "Units"), (snap) => {
             let list = "";
             snap.forEach(doc => {
                 const u = doc.data();
-                list += `
-                    <div class="unit-card-large">
-                        <div class="unit-header">عمارة: ${safeStr(u.building)} | وحدة: ${safeStr(u.unitNum)}</div>
-                        <div class="unit-body">
-                            <p><b>المالك:</b> ${safeStr(u.ownerName)} (${u.ownerType})</p>
-                            <p><b>المساحة:</b> ${safeNum(u.area)} م²</p>
-                            <p><b>تليفون:</b> ${safeStr(u.phone)}</p>
-                            <p><b>السيارات:</b> ${safeStr(u.carPlates)}</p>
-                            <p><b>تقييم المالك:</b> ${'⭐'.repeat(safeNum(u.rating))}</p>
-                            <div class="id-placeholder">صورة البطاقة المرفقة</div>
-                        </div>
-                    </div>`;
+                list += `<div class="unit-card"><h4>Unit: ${safeStr(u.unitNumber)}</h4><p>Owner: ${safeStr(u.ownerName)}</p><span>${safeStr(u.status)}</span><button class="btn-mini-del" onclick="app.deleteDoc('Units','${doc.id}','units')">×</button></div>`;
             });
             document.getElementById('module-display').innerHTML = `
-                <h2>إدارة المباني والوحدات</h2>
-                <div class="form-grid-complex">
-                    <input id="uBuild" placeholder="رقم العمارة">
-                    <input id="uNum" placeholder="رقم الشقة">
-                    <input id="uArea" type="number" placeholder="المساحة م²">
-                    <input id="uOwner" placeholder="اسم المالك">
-                    <input id="uPhone" placeholder="رقم التليفون">
-                    <input id="uID" placeholder="الرقم القومي">
-                    <input id="uCar" placeholder="أرقام السيارات">
-                    <select id="uType"><option>صاحب عقار</option><option>إيجار</option></select>
-                    <select id="uRate"><option value="5">5 نجوم</option><option value="4">4 نجوم</option></select>
-                    <button class="btn-gold" onclick="app.saveFullUnit()">حفظ الوحدة</button>
-                </div>
-                <div class="units-grid-modern">${list}</div>`;
-        });
-    },
-
-    // 4. الماليات (اشتراكات + ميزانية مشروعات)
-    renderFinance() {
-        onSnapshot(collection(db, "Finance"), (snap) => {
-            onSnapshot(collection(db, "Projects"), (pSnap) => {
-                let pList = "";
-                pSnap.forEach(pd => {
-                    const p = pd.data();
-                    pList += `<tr><td>${p.name}</td><td>${formatCurrency(p.budget)}</td><td>${formatCurrency(p.spent)}</td><td>${formatCurrency(p.budget - p.spent)}</td></tr>`;
-                });
-                
-                document.getElementById('module-display').innerHTML = `
-                    <h2>المالية والميزانيات</h2>
-                    <div class="grid-2">
-                        <div class="module-card">
-                            <h3>تسجيل (اشتراك / صيانة فردية)</h3>
-                            <div class="form-grid">
-                                <select id="fType"><option>إيراد (اشتراك)</option><option>إيراد (صيانة فردية)</option><option>مصروف</option></select>
-                                <input id="fAmt" type="number" placeholder="المبلغ">
-                                <input id="fNote" placeholder="بيان">
-                                <button class="btn-gold" onclick="app.saveFin()">تسجيل</button>
-                            </div>
-                        </div>
-                        <div class="module-card">
-                            <h3>ميزانية المشروعات</h3>
-                            <div class="form-grid">
-                                <input id="pName" placeholder="اسم المشروع">
-                                <input id="pBudget" type="number" placeholder="الميزانية">
-                                <button class="btn-gold" onclick="app.addProject()">إضافة مشروع</button>
-                            </div>
-                            <table><thead><tr><th>المشروع</th><th>الميزانية</th><th>المنصرف</th><th>المتبقي</th></tr></thead><tbody>${pList}</tbody></table>
-                        </div>
-                    </div>`;
-            });
-        });
-    },
-
-    // 5. الصيانة (تواريخ دقيقة + تقييم عمال)
-    renderMaintenance() {
-        onSnapshot(collection(db, "Maintenance"), (snap) => {
-            let list = "";
-            snap.forEach(doc => {
-                const t = doc.data();
-                list += `<div class="task-item">
-                    <span><b>وحدة ${t.unitNum}</b> - ${t.issue} <br> <small>تاريخ البلاغ: ${t.date}</small></span>
-                    <div><span>تقييم العامل: ${'⭐'.repeat(t.workerRate || 0)}</span>
-                    <button onclick="app.deleteDoc('Maintenance','${doc.id}')">إتمام</button></div>
-                </div>`;
-            });
-            document.getElementById('module-display').innerHTML = `
-                <h2>إدارة البلاغات والصيانة</h2>
+                <h2>${translations[this.currentLang].nav_units}</h2>
                 <div class="form-grid">
-                    <input id="mUnit" placeholder="رقم الوحدة">
-                    <input id="mIssue" placeholder="وصف العطل">
-                    <input id="mDate" type="date">
-                    <select id="mRate"><option value="5">ممتاز</option><option value="3">متوسط</option></select>
-                    <button class="btn-gold" onclick="app.addMaint()">فتح بلاغ</button>
+                    <input id="uNumber" placeholder="Unit #">
+                    <input id="uOwner" placeholder="Owner Name">
+                    <select id="uStatus"><option>مأهولة</option><option>خالية</option></select>
+                    <button class="btn-gold" onclick="app.addUnit()">${translations[this.currentLang].save}</button>
                 </div>
-                <div class="tasks-list">${list}</div>`;
+                <div class="units-grid">${list}</div>`;
         });
     },
 
-    // 6. الأمن والصلاحيات
     renderSecurity() {
         onSnapshot(collection(db, "Users"), (snap) => {
             let rows = "";
             snap.forEach(doc => {
                 const u = doc.data();
-                rows += `<tr><td>${u.name}</td><td>${u.role}</td><td><button onclick="app.deleteDoc('Users','${doc.id}')">حذف</button></td></tr>`;
+                rows += `<tr><td>${safeStr(u.name)}</td><td>${safeStr(u.role)}</td><td><button class="btn-del" onclick="app.deleteDoc('Users','${doc.id}','security')">X</button></td></tr>`;
             });
-            document.getElementById('module-display').innerHTML = `<h2>المستخدمين والصلاحيات</h2>
-                <div class="form-grid"><input id="un" placeholder="الاسم"><select id="ur"><option>مدير</option><option>محاسب</option><option>أمن</option></select><button class="btn-gold" onclick="app.addUser()">إضافة</button></div>
-                <table><thead><tr><th>المستخدم</th><th>الصلاحية</th><th>حذف</th></tr></thead><tbody>${rows}</tbody></table>`;
+            document.getElementById('module-display').innerHTML = `
+                <div class="module-card">
+                    <h2>${translations[this.currentLang].nav_security}</h2>
+                    <div class="form-grid">
+                        <input id="userName" placeholder="Username">
+                        <select id="userRole"><option>Admin</option><option>Security</option></select>
+                        <button class="btn-gold" onclick="app.addUser()">${translations[this.currentLang].add}</button>
+                    </div>
+                    <table class="styled-table"><thead><tr><th>Name</th><th>Role</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>
+                </div>`;
         });
     },
 
-    // 7. التقارير
+    renderMaintenance() {
+        onSnapshot(collection(db, "Maintenance"), (snap) => {
+            let tasks = "";
+            snap.forEach(doc => {
+                const t = doc.data();
+                tasks += `<div class="task-item"><span>Unit ${safeStr(t.unitNumber)}: ${safeStr(t.issue)}</span><button onclick="app.deleteDoc('Maintenance','${doc.id}','maintenance')">Done</button></div>`;
+            });
+            document.getElementById('module-display').innerHTML = `<h2>${translations[this.currentLang].nav_maintenance}</h2><div class="form-grid"><input id="mUnit" placeholder="Unit #"><input id="mIssue" placeholder="Issue"><button class="btn-gold" onclick="app.addMaint()">Open Request</button></div><div class="tasks-list">${tasks}</div>`;
+        });
+    },
+
+    renderFinance() {
+        onSnapshot(collection(db, "Finance"), (snap) => {
+            let rows = "";
+            snap.forEach(doc => {
+                const f = doc.data();
+                rows += `<tr><td>${safeStr(f.date)}</td><td>${safeStr(f.type)}</td><td>${formatCurrency(f.amount)}</td><td>${safeStr(f.note)}</td></tr>`;
+            });
+            document.getElementById('module-display').innerHTML = `<h2>${translations[this.currentLang].nav_finance}</h2><div class="form-grid"><select id="fType"><option>إيراد</option><option>مصروف</option></select><input id="fAmount" type="number" placeholder="Amount"><input id="fNote" placeholder="Note"><button class="btn-gold" onclick="app.addFin()">Record</button></div><table class="styled-table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+    },
+
     renderReports() {
-        document.getElementById('module-display').innerHTML = `
-            <h2>مركز التقارير الاستراتيجية</h2>
-            <div class="reports-grid">
-                <div class="report-box" onclick="app.exportAll('Units')">تقرير الملاك والسيارات (Excel)</div>
-                <div class="report-box" onclick="app.exportAll('Finance')">التقرير المالي السنوي (Excel)</div>
-                <div class="report-box" onclick="app.exportAll('Employees')">كشف حضور ورواتب العمال (Excel)</div>
-            </div>`;
+        document.getElementById('module-display').innerHTML = `<h2>${translations[this.currentLang].nav_reports}</h2><div class="reports-grid"><div class="report-box" onclick="app.exportAll('Finance')">Excel Report</div></div>`;
     },
 
-    // --- العمليات البرمجية (Logic) ---
-    async addEmp() {
-        await addDoc(collection(db, "Employees"), {
-            name: document.getElementById('en').value, job: document.getElementById('ej').value,
-            salary: safeNum(document.getElementById('es').value),
-            bonus: safeNum(document.getElementById('eb').value),
-            penalty: safeNum(document.getElementById('ep').value)
-        });
-    },
-    async setAttendance(id) {
-        const time = new Date().toLocaleTimeString('ar-EG');
-        await updateDoc(doc(db, "Employees", id), { checkIn: time });
-        alert("تم تسجيل الحضور: " + time);
-    },
-    async saveFullUnit() {
-        await addDoc(collection(db, "Units"), {
-            building: document.getElementById('uBuild').value,
-            unitNum: document.getElementById('uNum').value,
-            area: safeNum(document.getElementById('uArea').value),
-            ownerName: document.getElementById('uOwner').value,
-            phone: document.getElementById('uPhone').value,
-            ownerType: document.getElementById('uType').value,
-            carPlates: document.getElementById('uCar').value,
-            rating: safeNum(document.getElementById('uRate').value)
-        });
-    },
-    async addProject() {
-        await addDoc(collection(db, "Projects"), {
-            name: document.getElementById('pName').value,
-            budget: safeNum(document.getElementById('pBudget').value),
-            spent: 0
-        });
-    },
-    async saveFin() {
-        await addDoc(collection(db, "Finance"), {
-            type: document.getElementById('fType').value,
-            amount: safeNum(document.getElementById('fAmt').value),
-            note: document.getElementById('fNote').value,
-            date: new Date().toLocaleDateString('ar-EG')
-        });
-    },
-    async addMaint() {
-        await addDoc(collection(db, "Maintenance"), {
-            unitNum: document.getElementById('mUnit').value,
-            issue: document.getElementById('mIssue').value,
-            date: document.getElementById('mDate').value,
-            workerRate: safeNum(document.getElementById('mRate').value)
-        });
-    },
-    async addUser() {
-        await addDoc(collection(db, "Users"), { name: document.getElementById('un').value, role: document.getElementById('ur').value });
-    },
-    async deleteDoc(coll, id) {
-        if(confirm("حذف السجل؟")) await deleteDoc(doc(db, coll, id));
-    },
-    async exportAll(c) {
-        const s = await getDocs(collection(db, c));
-        let d = []; s.forEach(x => d.push(x.data()));
-        const ws = XLSX.utils.json_to_sheet(d);
+    // --- العمليات ---
+    async addEmp() { await addDoc(collection(db, "Employees"), { name: document.getElementById('empName').value, job: document.getElementById('empJob').value, salary: safeNum(document.getElementById('empSalary').value) }); },
+    async addUnit() { await addDoc(collection(db, "Units"), { unitNumber: document.getElementById('uNumber').value, ownerName: document.getElementById('uOwner').value, status: document.getElementById('uStatus').value }); },
+    async addFin() { await addDoc(collection(db, "Finance"), { type: document.getElementById('fType').value, amount: safeNum(document.getElementById('fAmount').value), note: document.getElementById('fNote').value, date: new Date().toLocaleDateString() }); },
+    async addMaint() { await addDoc(collection(db, "Maintenance"), { unitNumber: document.getElementById('mUnit').value, issue: document.getElementById('mIssue').value }); },
+    async addUser() { await addDoc(collection(db, "Users"), { name: document.getElementById('userName').value, role: document.getElementById('userRole').value }); },
+    async deleteDoc(coll, id) { if(confirm("Confirm Delete?")) await deleteDoc(doc(db, coll, id)); },
+    async exportAll(collName) {
+        const snap = await getDocs(collection(db, collName));
+        let data = []; snap.forEach(d => data.push(d.data()));
+        const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, c);
-        XLSX.writeFile(wb, `Heliopolis_${c}.xlsx`);
-    }
+        XLSX.utils.book_append_sheet(wb, ws, collName);
+        XLSX.writeFile(wb, `Heliopolis_${collName}.xlsx`);
+    },
+    toggleTheme() { document.body.classList.toggle('dark-mode'); }
 };
 
 window.onload = () => {
     app.loadModule('dashboard');
+    app.updateStaticTexts();
 };
