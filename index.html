@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heliopolis Residence | ERP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heliopolis Residence | ERP System</title>
     <!-- روابط PWA لجعل السيستم تطبيق قابل للتنصيب -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -24,79 +27,86 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="bg-blur"></div>
 
-    <div class="app-container">
-        <!-- القائمة الجانبية -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <div class="logo-circle">HR</div>
-                <h2 data-i18n="app_title">هليوبوليس رزيدنس</h2>
-            </div>
-            <nav>
-                <ul class="nav-links">
-                    <li onclick="app.loadModule('dashboard', this)" class="active"><i class="fas fa-home"></i> <span
-                            data-i18n="dashboard">الرئيسية</span></li>
-                    <li onclick="app.loadModule('hr', this)"><i class="fas fa-users"></i> <span
-                            data-i18n="hr">الموظفين</span></li>
-                    <li onclick="app.loadModule('adjustments', this)"><i class="fas fa-hand-holding-usd"></i> <span
-                            data-i18n="adjust">الحوافز والخصومات</span></li>
-                    <li onclick="app.loadModule('units', this)"><i class="fas fa-building"></i> <span
-                            data-i18n="units">الوحدات والملاك</span></li>
-                    <li onclick="app.loadModule('finance', this)"><i class="fas fa-wallet"></i> <span
-                            data-i18n="finance">المالية</span></li>
-                    <li onclick="app.loadModule('maintenance', this)"><i class="fas fa-tools"></i> <span
-                            data-i18n="maintenance">الصيانة</span></li>
-                    <li onclick="app.loadModule('security', this)"><i class="fas fa-shield-alt"></i> <span
-                            data-i18n="security">الأمن</span></li>
-                    <li onclick="app.loadModule('reports', this)"><i class="fas fa-file-export"></i> <span
-                            data-i18n="reports">التقارير</span></li>
-                </ul>
-            </nav>
-            <div class="designer-credit">
-                <p>System Architect</p>
-                <strong>Eng. Mohamed Salah & Eng. Tarek Zeinhom</strong>
-            </div>
-        </aside>
-
-        <!-- المحتوى الرئيسي -->
-        <main class="main-content">
-            <header class="main-header">
-
-                <!-- هذه المجموعة ستظهر على اليمين بسبب flex-direction: row-reverse -->
-                <div class="header-actions-right">
-                    <button class="btn-gold" onclick="app.toggleLanguage()"
-                        style="padding: 5px 10px; font-size: 0.7rem;">
+    <div class="app-wrapper">
+        <!-- المحتوى الرئيسي (يسار في العربي) -->
+        <main class="main-layout">
+            <header class="top-bar">
+                <!-- مجموعة الأزرار (يمين بجوار السايدبار) -->
+                <div class="header-right">
+                    <button class="action-btn" onclick="app.toggleLanguage()">
                         <i class="fas fa-globe"></i> <span id="lang-label">ENGLISH</span>
                     </button>
-                    <button class="btn-gold" onclick="app.toggleTheme()" style="padding: 5px 10px; border-radius: 50%;">
+                    <button class="action-btn" onclick="app.toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
                 </div>
 
                 <!-- البحث في المنتصف -->
                 <div class="header-center">
-                    <input type="text" id="quick-search" placeholder="بحث..."
-                        style="width: 200px; border-radius: 20px;">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="quick-search" placeholder="بحث سريع...">
+                    </div>
                 </div>
 
-                <!-- البروفايل سيظهر على اليسار -->
-                <div class="profile-box">
-                    <div class="profile-info">
+                <!-- البروفايل (يسار الشاشة) -->
+                <div class="header-left">
+                    <div class="names-group">
                         <span class="eng-name">Eng. Mohamed Salah</span>
                         <span class="eng-name">& Tarek Zeinhom</span>
                     </div>
-                    <div class="avatar-duo">M.T</div>
+                    <div class="duo-avatar">M.T</div>
                 </div>
             </header>
 
-            <div id="module-display" class="module-view">
+            <!-- منطقة عرض البيانات -->
+            <div id="module-display" class="content-canvas">
                 <!-- الموديولات تظهر هنا -->
             </div>
         </main>
+
+        <!-- القائمة الجانبية (يمين الشاشة) -->
+        <aside class="side-panel">
+            <div class="panel-header">
+                <div class="logo-box">HR</div>
+                <h2>هليوبوليس رزيدنس</h2>
+            </div>
+            <nav class="panel-nav">
+                <ul class="nav-links">
+                    <li onclick="app.loadModule('dashboard', this)" class="active"><i class="fas fa-chart-line"></i>
+                        <span>الرئيسية</span>
+                    </li>
+                    <li onclick="app.loadModule('hr', this)"><i class="fas fa-users"></i> <span>الموظفين</span></li>
+                    <li onclick="app.loadModule('adjustments', this)"><i class="fas fa-hand-holding-usd"></i>
+                        <span>الحوافز والخصومات</span>
+                    </li>
+                    <li onclick="app.loadModule('units', this)"><i class="fas fa-building"></i> <span>الوحدات
+                            والملاك</span></li>
+                    <li onclick="app.loadModule('finance', this)"><i class="fas fa-wallet"></i> <span>المالية</span>
+                    </li>
+                    <li onclick="app.loadModule('maintenance', this)"><i class="fas fa-tools"></i> <span>الصيانة</span>
+                    </li>
+                    <li onclick="app.loadModule('security', this)"><i class="fas fa-shield-alt"></i> <span>الأمن</span>
+                    </li>
+                    <li onclick="app.loadModule('reports', this)"><i class="fas fa-file-excel"></i>
+                        <span>التقارير</span>
+                    </li>
+                </ul>
+            </nav>
+            <div class="panel-footer">
+                <p>Designed by</p>
+                <strong>M. Salah & T. Zeinhom</strong>
+            </div>
+        </aside>
     </div>
 
     <script type="module" src="app.js"></script>

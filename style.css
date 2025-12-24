@@ -1,158 +1,293 @@
+/* =========================================
+   1. الإعدادات الأساسية
+   ========================================= */
 :root {
-    --primary: #1a2a6c; --gold: #d4af37; --bg: #f4f7f6;
-    --card: rgba(255, 255, 255, 0.95); --text: #333;
-    /* إضافة متغير للخلفية الشفافة خلف الخطوط */
-    --font-bg: rgba(255, 255, 255, 0.6); 
+    --primary: #1a2a6c; --gold: #d4af37; --bg-overlay: rgba(255, 255, 255, 0.9);
+    --sidebar-w: 280px; --text-color: #111;
 }
 .dark-mode {
-    --primary: #0a0a0a; --gold: #f1c40f; --bg: #020617;
-    --card: rgba(30, 30, 30, 0.95); --text: #eee;
-    --font-bg: rgba(0, 0, 0, 0.4);
+    --primary: #050505; --gold: #f1c40f; --bg-overlay: rgba(20, 20, 20, 0.95);
+    --text-color: #eee;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
 
-body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; }
+body { background: #f0f2f5; height: 100vh; width: 100vw; overflow: hidden; }
 
 .bg-blur {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1920&q=80') center/cover;
-    filter: blur(10px) brightness(0.6); z-index: -1;
+    background: url('https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+    filter: blur(10px) brightness(0.5); z-index: -1;
 }
 
-/* تخطيط الشبكة لعدم التداخل */
-.app-container {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    height: 100vh;
-}
-
-.sidebar {
-    background: var(--primary); color: white; padding: 30px 20px;
-    display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-}
-
-.main-content {
-    display: flex; flex-direction: column; overflow: hidden;
-}
-
-/* --- تعديل الهيدر ليصبح اللغة يمين والاسم يسار --- */
-.main-header {
-    height: 80px; padding: 0 30px; display: flex; align-items: center;
-    justify-content: space-between; background: var(--card); border-bottom: 2px solid var(--gold);
-    flex-direction: row-reverse; /* عكس الاتجاه لجعل أول عنصر بالـ HTML يظهر جهة اليمين */
-}
-
-/* تنسيق مجموعة اللغة والثيم (تظهر يميناً) */
-.header-actions-right {
+/* =========================================
+   2. تخطيط Flexbox (منع التداخل نهائياً)
+   ========================================= */
+.app-wrapper {
     display: flex;
-    align-items: center;
-    gap: 15px;
+    height: 100vh;
+    width: 100vw;
+    flex-direction: row; /* يمين سايدبار - يسار محتوى */
 }
 
-/* تنسيق البروفايل والأسماء (تظهر يساراً) */
-.profile-box { 
-    display: flex; 
-    align-items: center; 
-    gap: 15px; 
-}
-
-.profile-info {
+/* السايدبار (ثابت العرض) */
+.side-panel {
+    width: var(--sidebar-w);
+    background: var(--primary);
+    color: white;
     display: flex;
     flex-direction: column;
-    text-align: right;
+    padding: 20px;
+    flex-shrink: 0; /* يمنعه من الانكماش */
+    box-shadow: -5px 0 20px rgba(0,0,0,0.3);
 }
 
-/* --- إضافة خلفية شفافة تحت النصوص للوضوح --- */
-h1, h2, h3, .eng-name, .profile-info, .stat-card h4, .data-row b {
-    background: var(--font-bg);
-    padding: 2px 8px;
-    border-radius: 6px;
-    display: inline-block;
-    backdrop-filter: blur(4px);
-    width: fit-content;
+/* المحتوى الرئيسي (مرن يأخذ باقي المساحة) */
+.main-layout {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.module-view {
-    flex: 1; padding: 30px; overflow-y: auto;
+/* =========================================
+   3. الهيدر (اللغة يمين - الاسم يسار)
+   ========================================= */
+.top-bar {
+    height: 75px;
+    background: var(--bg-overlay);
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    border-bottom: 2px solid var(--gold);
+    flex-shrink: 0;
 }
 
-/* القائمة الجانبية */
-.nav-links { list-style: none; margin-top: 30px; }
-.nav-links li {
-    padding: 12px 15px; margin-bottom: 8px; border-radius: 12px;
-    cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.3s;
-}
-.nav-links li:hover, .nav-links li.active { background: var(--gold); color: var(--primary); font-weight: bold; }
+.header-right, .header-left { display: flex; align-items: center; gap: 15px; }
 
-/* الهيدر المضيء */
+/* بروفايل المهندسين يساراً */
+.names-group { display: flex; flex-direction: column; text-align: right; }
 .eng-name {
-    display: block; font-size: 0.72rem; font-weight: bold; color: var(--primary);
+    font-size: 0.72rem; font-weight: 800; color: var(--primary);
     animation: glow 2.5s infinite ease-in-out;
+    background: rgba(255,255,255,0.5); padding: 2px 8px; border-radius: 4px;
 }
 @keyframes glow {
     0%, 100% { text-shadow: 0 0 0px transparent; color: var(--primary); }
-    50% { text-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold); color: var(--gold); }
+    50% { text-shadow: 0 0 10px var(--gold); color: var(--gold); }
 }
 
-.avatar-duo {
-    width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary), var(--gold));
-    color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-weight: bold; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.2);
+.duo-avatar {
+    width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--gold));
+    border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: bold; border: 2px solid white;
 }
 
-/* العناصر داخل الموديولات */
-.form-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px; background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px;
+/* أزرار الأكشن يميناً */
+.action-btn {
+    background: var(--primary); color: white; border: 1px solid var(--gold);
+    padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7rem; font-weight: bold;
 }
-input, select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-.btn-gold { background: var(--gold); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-.unit-card-large {
-    background: var(--card); border-radius: 15px; margin-bottom: 15px;
-    border-top: 4px solid var(--gold); padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* البحث */
+.search-box { display: flex; align-items: center; background: white; border-radius: 20px; padding: 5px 15px; border: 1px solid #ddd; }
+.search-box input { border: none; outline: none; padding: 5px; width: 200px; }
+
+/* =========================================
+   4. الجداول والبيانات (حل مشكلة التفكك)
+   ========================================= */
+.content-canvas {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto; /* يسمح بالتمرير داخل المحتوى فقط */
 }
+
+.module-card {
+    background: var(--bg-overlay);
+    border-radius: 20px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.styled-table {
+    width: 100%; border-collapse: collapse; margin-top: 20px;
+    background: white; border-radius: 10px; overflow: hidden;
+}
+.styled-table th { background: var(--primary); color: var(--gold); padding: 15px; text-align: right; }
+.styled-table td { padding: 12px 15px; border-bottom: 1px solid #eee; color: #000; font-weight: bold; }
+.styled-table tr:hover { background: rgba(212, 175, 55, 0.1); }
+
+/* القائمة الجانبية (Nav) */
+.nav-links { list-style: none; margin-top: 20px; }
+.nav-links li {
+    padding: 12px 15px; margin-bottom: 8px; border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 15px; transition: 0.3s;
+}
+.nav-links li:hover, .nav-links li.active { background: var(--gold); color: var(--primary); font-weight: bold; }
 
 /* الموبايل */
 @media (max-width: 768px) {
-    .app-container { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .main-header { flex-direction: column-reverse; height: auto; padding: 10px; }
+    .app-wrapper { flex-direction: column; height: auto; }
+    .side-panel { width: 100%; position: sticky; top: 0; z-index: 1100; }
+    .nav-links { display: flex; overflow-x: auto; }
+    .nav-links li { flex: 0 0 auto; }
+    .top-bar { flex-direction: column; height: auto; padding: 10px; }
+}
+/* --- تنسيق النموذج الاحترافي --- */
+.form-title {
+    font-size: 1.1rem;
+    color: var(--primary);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    display: block;
 }
 
-.text-green { color: #2ecc71; font-weight: bold; }
-.text-red { color: #e74c3c; font-weight: bold; }
-.file-btn { background: #eee; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; margin: 2px; border: 1px solid var(--gold); }
-
-/* --- كود إبراز النصوص فوق الخلفية الغامقة --- */
-
-/* 1. تطبيق طبقة حماية بيضاء شفافة خلف العناوين والأسماء */
-h1, h2, h3, .eng-name, .profile-info, .stat-card h4, .data-row b, label {
-    background: rgba(255, 255, 255, 0.65) !important; /* طبقة بيضاء شفافة */
-    padding: 2px 10px; /* مسافة بسيطة حول الكلام */
-    border-radius: 6px; /* حواف ناعمة */
-    backdrop-filter: blur(5px); /* تعتيم بسيط للخلفية خلف النص لزيادة التركيز */
-    display: inline-block; /* لكي يكون الجزء الشفاف على قد الكلام بالظبط */
-    color: #000 !important; /* ضمان أن يكون لون الخط أسود غامق ليظهر فوق الأبيض الشفاف */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* ظل خفيف جداً لإعطاء عمق */
-    margin-bottom: 5px;
+.pro-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
 }
 
-/* 2. جعل الكلام داخل الجداول والكروت يبرز أكثر */
-.styled-table td, .unit-body p, .task-item span {
-    background: rgba(53, 212, 252, 0.5); /* طبقة أخف للجداول */
-    padding: 0px 15px;
+.form-group {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.input-row input, .input-row select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-row input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+.btn-gold-lg {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: var(--primary);
+    border: none;
     border-radius: 10px;
-    display: inline-block;
-    color: #000;
-    font-weight: 600;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.3s;
 }
 
-/* 3. في حالة الـ Dark Mode، نعكس الطبقة لتكون سودة شفافة والكلام أبيض */
-.dark-mode h1, .dark-mode h2, .dark-mode h3, 
-.dark-mode .eng-name, .dark-mode .profile-info, 
-.dark-mode .stat-card h4, .dark-mode .data-row b {
-    background: rgba(0, 0, 0, 0.5) !important;
-    color: #ffffff !important;
+.btn-gold-lg:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* شارات الجدول */
+.badge-gold {
+    background: var(--gold);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.file-input-custom {
+    padding: 8px !important;
+    background: #f8f9fa !important;
+    font-size: 0.7rem !important;
+}
+/* --- تنسيق كروت الداش بورد --- */
+.stats-grid-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card-pro {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-bottom: 5px solid var(--primary);
+    transition: 0.3s;
+}
+
+.stat-card-pro:hover { transform: translateY(-5px); }
+
+.stat-icon {
+    width: 60px; height: 60px;
+    border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+}
+
+.blue .stat-icon { background: rgba(26, 42, 108, 0.1); color: #1a2a6c; }
+.green .stat-icon { background: rgba(46, 204, 113, 0.1); color: #2ecc71; }
+.gold .stat-icon { background: rgba(212, 175, 55, 0.1); color: #d4af37; }
+.red .stat-icon { background: rgba(231, 76, 60, 0.1); color: #e74c3c; }
+
+.stat-info h4 { font-size: 0.85rem; color: #666; margin-bottom: 5px; background: none !important; }
+.stat-info h3 { font-size: 1.2rem; color: var(--primary); margin: 0; background: none !important; }
+
+/* توزيع التفاصيل */
+.dashboard-details-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+}
+
+.sub-title {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 8px;
+}
+
+/* التنبيهات */
+.alert-item {
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-right: 4px solid #ddd;
+    background: rgba(255,255,255,0.5);
+}
+.alert-item.info { border-right-color: var(--primary); color: var(--primary); }
+.alert-item.warning { border-right-color: #f1c40f; color: #856404; }
+.alert-item.success { border-right-color: #27ae60; color: #155724; }
+
+@media (max-width: 768px) {
+    .dashboard-details-grid { grid-template-columns: 1fr; }
 }
