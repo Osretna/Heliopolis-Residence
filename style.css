@@ -461,6 +461,58 @@ html, body {
     0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     50% { box-shadow: 0 0 15px var(--gold); }
 }
+/* تأثير النبض المضيء لأسماء المهندسين */
+.eng-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+    white-space: nowrap;
+    animation: glow-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { text-shadow: 0 0 0px rgba(212, 175, 55, 0); color: #1a2a6c; }
+    50% { text-shadow: 0 0 10px #d4af37, 0 0 20px #d4af37; color: #d4af37; }
+}
+
+.avatar-duo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, #1a2a6c, #d4af37);
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.9rem;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    animation: border-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes border-glow {
+    0%, 100% { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    50% { box-shadow: 0 0 15px #d4af37; }
+}
+
+/* تنسيق الموديلات الجديدة */
+.form-grid-complex {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; background: rgba(255,255,255,0.7);
+    padding: 15px; border-radius: 15px; margin-bottom: 20px;
+}
+
+.unit-card-large {
+    background: white; border-radius: 15px; overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-top: 4px solid #d4af37;
+    transition: 0.3s;
+}
+
+.unit-card-large:hover { transform: translateY(-5px); }
+
+.unit-header { background: #1a2a6c; color: white; padding: 10px; text-align: center; font-weight: bold; }
+.unit-body { padding: 15px; font-size: 0.85rem; line-height: 1.6; }
+
+.text-green { color: #27ae60; font-weight: bold; }
+.text-red { color: #e74c3c; font-weight: bold; }
 
 
 
