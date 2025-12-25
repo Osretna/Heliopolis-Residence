@@ -23,6 +23,7 @@
             navigator.serviceWorker.register('sw.js').then(() => console.log("Heliopolis App Ready"));
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -36,17 +37,39 @@
 <body>
     <div class="bg-blur"></div>
 
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-overlay"
+        style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(26, 42, 108, 0.95); z-index:9999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(10px);">
+        <div class="module-card" style="width:350px; text-align:center; padding:30px;">
+            <h2 style="color:var(--primary); margin-bottom:20px;">Heliopolis Residence</h2>
+            <input id="loginEmail" type="email" placeholder="البريد الإلكتروني"
+                style="width:100%; margin-bottom:15px; padding:12px; border-radius:8px; border:1px solid #ddd;">
+            <input id="loginPass" type="password" placeholder="كلمة المرور"
+                style="width:100%; margin-bottom:20px; padding:12px; border-radius:8px; border:1px solid #ddd;">
+            <button class="btn-gold-lg" onclick="handleInitialLogin()">دخول النظام</button>
+        </div>
+    </div>
+
     <div class="app-wrapper">
         <!-- المحتوى الرئيسي (يسار في العربي) -->
         <main class="main-layout">
             <header class="top-bar">
                 <!-- مجموعة الأزرار (يمين بجوار السايدبار) -->
                 <div class="header-right">
+                    <!-- زر تبديل اللغة -->
                     <button class="action-btn" onclick="app.toggleLanguage()">
                         <i class="fas fa-globe"></i> <span id="lang-label">ENGLISH</span>
                     </button>
+
+                    <!-- زر الوضع الليلي -->
                     <button class="action-btn" onclick="app.toggleTheme()">
                         <i class="fas fa-moon"></i>
+                    </button>
+
+                    <!-- زر تسجيل الخروج -->
+                    <button class="action-btn" onclick="app.handleLogout()"
+                        style="background: #e74c3c; border-color: #c0392b;">
+                        <i class="fas fa-sign-out-alt"></i> <span id="logout-label">خروج</span>
                     </button>
                 </div>
 
